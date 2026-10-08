@@ -47,10 +47,10 @@ WITH ventas AS (
 ),
 ranking AS (
     SELECT v.genre_id, v.track_id, v.name, v.unidades, v.recaudado,
-           ROW_NUMBER() OVER (PARTITION BY v.genre_id
+           RANK() OVER (PARTITION BY v.genre_id
                               ORDER BY v.unidades DESC,    
                                        v.recaudado DESC,   
-                                       v.track_id)         
+                                       v.track_id) AS pos   
     FROM ventas v
 )
 SELECT g.name AS genero, r.name AS track, r.unidades, r.recaudado, r.pos
@@ -61,8 +61,6 @@ ORDER BY g.name, r.pos;
 
 
 -- Ejercicio 6: Para cada factura, mostrar los días transcurridos desde la factura anterior del mismo cliente. Después, calcular el promedio de días entre compras de cada cliente.
-
-SELECT * FROM invoice
 
 WITH dif AS (
 	SELECT i.invoice_id, i.customer_id, i.invoice_date,
@@ -104,8 +102,6 @@ ORDER BY pp.precio DESC
 
 
 -- Ejercicio 8: Control de calidad: verificar que invoice.total coincide con la suma de unit_price * quantity de sus líneas, y listar las facturas que no coinciden.
-
-SELECT * FROM invoice
 
 WITH totales AS (
     SELECT il.invoice_id,
