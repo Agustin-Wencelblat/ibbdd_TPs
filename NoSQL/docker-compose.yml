@@ -1,0 +1,39 @@
+# Redis, MongoDB y Neo4j locales para las guías de la 2da mitad.
+# Uso: en esta carpeta, `docker compose up -d`. Para apagar: `docker compose down`.
+# Los datos quedan en volúmenes: sobreviven a un `down` (se borran con `down -v`).
+
+services:
+  redis:
+    image: redis:7
+    container_name: bd-redis
+    ports:
+      - "6379:6379"          # notebook: redis.Redis(host="localhost", port=6379, decode_responses=True)
+    volumes:
+      - redis_data:/data
+
+  mongo:
+    image: mongo:7
+    container_name: bd-mongo
+    ports:
+      - "27018:27017"        # notebook: MongoClient("mongodb://admin:secret@localhost:27018/?authSource=admin")
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    volumes:
+      - mongo_data:/data/db
+
+  neo4j:
+    image: neo4j:5
+    container_name: bd-neo4j
+    ports:
+      - "7474:7474"          # Neo4j Browser: http://localhost:7474
+      - "7687:7687"          # conexión bolt
+    environment:
+      NEO4J_AUTH: neo4j/password123   # usuario neo4j, contraseña password123 (mínimo 8 caracteres)
+    volumes:
+      - neo4j_data:/data
+
+volumes:
+  redis_data:
+  mongo_data:
+  neo4j_data:
