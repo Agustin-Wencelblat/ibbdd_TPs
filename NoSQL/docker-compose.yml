@@ -30,6 +30,7 @@ services:
       - "7687:7687"          # conexión bolt
     environment:
       NEO4J_AUTH: neo4j/password123   # usuario neo4j, contraseña password123 (mínimo 8 caracteres)
+      NEO4J_PLUGINS: '["graph-data-science"]'   # GDS: proyecciones y medidas (gds.graph.project, gds.degree...)
     volumes:
       - neo4j_data:/data
 
