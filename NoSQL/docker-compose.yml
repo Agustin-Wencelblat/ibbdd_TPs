@@ -33,6 +33,7 @@ services:
       NEO4J_PLUGINS: '["graph-data-science"]'   # GDS: proyecciones y medidas (gds.graph.project, gds.degree...)
     volumes:
       - neo4j_data:/data
+      - ./import:/var/lib/neo4j/import   # CSVs para LOAD CSV 'file:///...': ponerlos en la carpeta import/
 
 volumes:
   redis_data:
