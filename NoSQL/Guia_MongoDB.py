@@ -180,8 +180,49 @@ for doc in coleccion_covid.aggregate(pipeline):
 print("\nEjercicio 15 - Casos de Argentina por anio")
 
 pipeline = [
-    {"$match":{"location":"Argentina"}}
-    {"$group"}{
-        "_id" : {"$substr": ["$date",0,4]}
-    }
+    {"$match":{"location":"Argentina"}},
+    {"$group":{
+        "_id" : {"$substr": ["$date",0,4]},
+        "casos": {"$sum": {"$ifNull": ["$new_cases", 0]}},
+    }},
+    {"$sort": {"_id": 1}},
 ]
+
+for doc in coleccion_covid.aggregate(pipeline):
+    print(doc)
+
+# Ejercicio 16:
+print("\nEjercicio 16 - Promedio de new_deaths por continente en 2021")
+
+pipeline = [
+    {"$match": {
+        "date": {"$gte": "2021-01-01", "$lte": "2021-12-31"},
+        "continent": {"$ne": None},          # saca los totales (continent null)
+    }},
+    {"$group": {
+        "_id": "$continent",
+        "prom_new_deaths": {"$avg": "$new_deaths"},   # $avg ignora los null
+    }},
+    {"$sort": {"prom_new_deaths": -1}},
+]
+for doc in coleccion_covid.aggregate(pipeline):
+    print(doc)
+
+# Ejercicio 17:
+print("\nEjercicio 17 - Paises con documento el 2020-12-25, por continente")
+
+pipeline = [
+    {"$match":{
+        "date": "2020-12-25",
+        "iso_code": {"$regex":"^[A-Z]{3}$"},
+        "continent": {"$ne": None},
+    }},
+    {"$group":{
+        "_id": "$continent",
+        "paises": {"$sum": 1},
+    }},
+    {"$sort":{"paises": -1}},
+]
+
+for doc in coleccion_covid.aggregate(pipeline):
+    print(doc)
